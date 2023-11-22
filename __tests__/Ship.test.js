@@ -1,6 +1,4 @@
 const Ship = require("../src/Ship");
-const Port = require("../src/Port");
-const Itinerary = require("../src/Itinerary");
 
 describe("Ship", () => {
   describe("with ports and an itinerary", () => {
@@ -39,8 +37,21 @@ describe("Ship", () => {
       expect(dover.addShip).toHaveBeenCalledWith(ship);
     });
 
+    it("has a previous port set to null on instantiation", () => {
+      expect(ship.previousPort).toBeNull();
+    });
+
     it("has a starting port", () => {
       expect(ship.currentPort).toBe(dover);
+    });
+
+    it("can set sail", () => {
+      const previousPort = ship.currentPort;
+      ship.setSail();
+
+      expect(ship.currentPort).toBeFalsy();
+      expect(dover.removeShip).toHaveBeenCalledWith(ship);
+      expect(ship.previousPort).toBe(previousPort);
     });
 
     it("can dock at a different port", () => {
@@ -49,13 +60,6 @@ describe("Ship", () => {
 
       expect(ship.currentPort).toBe(calais);
       expect(calais.addShip).toHaveBeenCalledWith(ship);
-    });
-
-    it("can set sail", () => {
-      ship.setSail();
-
-      expect(ship.currentPort).toBeFalsy();
-      expect(dover.removeShip).toHaveBeenCalledWith(ship);
     });
 
     it("can't sail further than its itinerary", () => {
